@@ -9,6 +9,9 @@ var _ = require('lodash');
 var domify = require('domify');
 var localLinks = require('local-links');
 var templates = require('../templates');
+var React = require('react');
+var ReactDOM = require('react-dom');
+var Layout = require('./layout');
 
 
 module.exports = View.extend({
@@ -28,6 +31,10 @@ module.exports = View.extend({
         // main renderer
         this.renderWithTemplate(this);
 
+        var div = document.createElement('div');
+        document.body.appendChild(div);
+        ReactDOM.render(<Layout />,div);
+        
         // init and configure our page switcher
         this.pageSwitcher = new ViewSwitcher(this.queryByHook('page-container'), {
             show: function (newView, oldView) {

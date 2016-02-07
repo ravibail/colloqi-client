@@ -4,7 +4,6 @@ var View = require('ampersand-view');
 //var _ = require('lodash');
 //var key = require('keymaster');
 
-
 module.exports = View.extend({
     // register keyboard handlers
     registerKeyboardShortcuts: function() {

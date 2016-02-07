@@ -6,14 +6,16 @@ var InfoPage = require('./pages/info');
 var PersonAddPage = require('./pages/person-add');
 var PersonEditPage = require('./pages/person-edit');
 var PersonShowPage = require('./pages/person-show');
+var React = require('react');
+var ReactDOM = require('react-dom');
+var Component = require('./views/components');
 
 
 module.exports = Router.extend({
     routes: {
         '': 'home',
-        'collections': 'collectionDemo',
-        'info': 'info',
-        'person/add': 'personAdd',
+        'groupView/:id/:subject': 'groupView',
+        'directory/': 'directory',
         'person/:id': 'personView',
         'person/:id/edit': 'personEdit',
         '(*path)': 'catchAll'
@@ -26,21 +28,14 @@ module.exports = Router.extend({
         }));
     },
 
-    collectionDemo: function () {
-        app.trigger('page', new CollectionDemo({
-            model: app.me,
-            collection: app.people
-        }));
+    groupView: function (id, subject) {
+        app.state = {title : subject};
+        ReactDOM.render(<Component.groupView id={id} />, document.getElementById('content'));
     },
 
-    info: function () {
-        app.trigger('page', new InfoPage({
-            model: app.me
-        }));
-    },
-
-    personAdd: function () {
-        app.trigger('page', new PersonAddPage());
+    directory: function () {
+        app.state = {title: 'Directory'};
+        ReactDOM.render(<Component.directory />, document.getElementById('content'));
     },
 
     personEdit: function (id) {

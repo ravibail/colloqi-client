@@ -1,27 +1,15 @@
-var AmpersandModel = require('ampersand-model');
-
+var AmpersandModel = require('ampersand-model'),
+    app = require('ampersand-app');
 
 module.exports = AmpersandModel.extend({
-    type: 'user',
-    props: {
-        id: ['string'],
-        firstName: ['string', true, ''],
-        lastName: ['string', true, ''],
-        username: ['string']
-    },
-    derived: {
-        fullName: {
-            deps: ['firstName', 'lastName'],
-            cache: true,
-            fn: function () {
-                return this.firstName + ' ' + this.lastName;
-            }
-        },
-        initials: {
-            deps: ['firstName', 'lastName'],
-            cache: true,
-            fn: function () {
-                return (this.firstName.charAt(0) + this.lastName.charAt(0)).toUpperCase();
+    urlRoot: "http://efle3r.colloqi.com:80/api/users",
+    ajaxConfig: function() {
+        return {
+            headers : {
+                'Access-Token' : app.accessToken
+            },
+            xhrFields : {
+                'withCredentials' : true
             }
         }
     }
