@@ -19,13 +19,28 @@ window.app = app;
 
 injectTapEventPlugin();
 
+if ('serviceWorker' in navigator) {
+    //Register service worker
+    navigator.serviceWorker.register('/service-workers/service-worker-main.js').then(function(registration) {
+        console.log('Service worker registered with scope: ',registration.scope);
+    }).catch(function(err) {
+        console.log('Registeration error: ',err);
+    })
+}
+
 // Extends our main app singleton
 app.extend({
     router: new Router(),
     state: {},
+    groups: [],
+    user : {},
+    directory: [],
     // This is where it all starts
     init: function() {
         // Create and attach our main view
+        this.mainView = new MainView({
+            el: document.body
+        });
         
         var xhr = new XMLHttpRequest();
         xhr.open("POST","http://efle3r.colloqi.com:80/api/users/login?include=user");
@@ -38,10 +53,6 @@ app.extend({
                 var groups = new Groups().fetch();
                 groups.onload = function() {
                     app.groups = JSON.parse(groups.response);
-                    this.mainView = new MainView({
-                        model: this.user,
-                        el: document.body
-                    });
                 }
                 var person = new Users().fetch();
                 person.onload = function() {

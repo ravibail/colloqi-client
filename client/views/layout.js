@@ -16,6 +16,7 @@ module.exports = class Layout extends React.Component{
         this.state = {
             showMenu: false,
             page: app.state,
+            groups: app.groups,
         };
         this.toggleMenu = this.toggleMenu.bind(this);
         this.viewDirectory = this.viewDirectory.bind(this);
