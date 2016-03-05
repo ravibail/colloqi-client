@@ -24,6 +24,7 @@ var fixPath = function (pathString) {
 // -----------------
 app.use(compress());
 app.use(serveStatic(fixPath('public')));
+app.use(serveStatic(fixPath('client')));
 
 // we only want to expose tests in dev
 if (config.isDev) {
@@ -65,7 +66,6 @@ if (config.isDev) {
         root: '/test'
     }));
 }
-
 
 // -----------------
 // Set our client config cookie

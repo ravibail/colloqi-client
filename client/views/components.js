@@ -4,36 +4,31 @@ var React = require('react'),
     Paper = require('material-ui/lib/paper'),
     List = require('material-ui/lib/lists/list'),
     ListItem = require('material-ui/lib/lists/list-item'),
-    Divider = require('material-ui/lib/divider');
+    Divider = require('material-ui/lib/divider'),
+    ClipboardIcon = require('material-ui/lib/svg-icons/content/content-paste');
+    
+var Node = React.createClass({
+    mixins: [ampersandMixin],
+    displayName: 'Directory',
+    
+    getUserReports : function() {
+        
+    },
+    
+    render: function() {
+        var user = this.props.user,
+            getUserReports = this.getUserReports;
+        var childNodes = this.props.user.items.map(function(sub,index) {
+            return <Node user={sub} key={sub.id}/>;
+        })
+        return (
+            <ListItem key={user.id} primaryText={user.title} nestedItems={childNodes}
+                                    rightIcon={<ClipboardIcon onTouchTap={getReports(user.id)}/>} />
+        )
+    }
+});
 
 module.exports = {
-    groupView: React.createClass({
-        mixins : [ampersandMixin],
-        displayName : 'Layout',
-        
-        render: function() {
-            var selectedGroup, membersList = [];
-            var id = this.props.id;
-            app.groups.forEach(function(group) {
-                if (group.id == id) {
-                    selectedGroup = group;
-                }
-            })
-            for(var id in selectedGroup.members) {
-                membersList.push(<ListItem key={id}> {selectedGroup.members[id].title} </ListItem>);
-            }
-            var details =<div>
-                          <List>
-                            <ListItem>{selectedGroup.isPublic?'Public':'Private'}; {selectedGroup.messageAll? 'Message all' : 'Message only admins'}</ListItem>
-                          </List>
-                          <Divider />
-                          <List subheader='Participants'>
-                            {membersList}
-                          </List>
-                        </div>
-            return (<Paper zDepth={1} children={details}/>)
-        }
-    }),
     directory: React.createClass({
         mixins: [ampersandMixin],
         displayName: 'Directory',
@@ -50,5 +45,6 @@ module.exports = {
                         </div>
             return list;
         }
-    })
+    }),
+    node: Node
 }

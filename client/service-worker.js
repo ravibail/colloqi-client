@@ -1,7 +1,8 @@
 var cacheName = 'colloqi-client',
     urlsToCache = [
-        '/'
-    ];
+        
+    ],
+    loginResponse;
 // Set the callback for the install step
 self.addEventListener('install', function(event) {
     // Perform install steps

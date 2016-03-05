@@ -1,21 +1,27 @@
 var app = require('ampersand-app');
 var Router = require('ampersand-router');
 var HomePage = require('./pages/home');
-var CollectionDemo = require('./pages/collection-demo');
 var InfoPage = require('./pages/info');
-var PersonAddPage = require('./pages/person-add');
-var PersonEditPage = require('./pages/person-edit');
-var PersonShowPage = require('./pages/person-show');
+var Login = require('./views/login');
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Component = require('./views/components');
-
+var Layout = require('./views/layout');
+var Profile = require('./views/profile');
+var Report = require('./views/report');
+var Tree = require('./views/tree');
 
 module.exports = Router.extend({
     routes: {
         '': 'home',
         'groupView/:id/:subject': 'groupView',
-        'directory/': 'directory',
+        'directory': 'directory',
+        'login': 'login',
+        'profile': 'profile',
+        'engagements': 'engagements',
+        'task': 'task',
+        'form/:index': 'form',
+        'reportees': 'reportees',
         'person/:id': 'personView',
         'person/:id/edit': 'personEdit',
         '(*path)': 'catchAll'
@@ -23,9 +29,8 @@ module.exports = Router.extend({
 
     // ------- ROUTE HANDLERS ---------
     home: function () {
-        app.trigger('page', new HomePage({
-            model: app.me
-        }));
+        ReactDOM.render(<Layout />,document.body);
+        this.redirectTo('engagements')
     },
 
     groupView: function (id, subject) {
@@ -36,6 +41,35 @@ module.exports = Router.extend({
     directory: function () {
         app.state = {title: 'Directory'};
         ReactDOM.render(<Component.directory />, document.getElementById('content'));
+    },
+    
+    login: function () {
+        ReactDOM.render(<Login />, document.body);
+    },
+    
+    profile: function() {
+        app.state = {title: app.user.title};
+        ReactDOM.render(<Profile />, document.getElementById('content'));
+    },
+    
+    engagements: function() {
+        app.state = {title: 'Select an Engagement'};
+        ReactDOM.render(<Report.engagements />, document.getElementById('content'));
+    },
+    
+    task: function() {
+        app.state = {title: 'Task form'};
+        ReactDOM.render(<Report.taskForm />, document.getElementById('content'));
+    },
+    
+    form: function(index) {
+        app.state = {title: 'Engagement'};
+        ReactDOM.render(<Report.formPage index={index} />,document.getElementById('content'));
+    },
+    
+    reportees: function() {
+        app.state = {title: 'Reportees'};
+        ReactDOM.render(<Tree />, document.getElementById('content'));
     },
 
     personEdit: function (id) {
@@ -51,6 +85,6 @@ module.exports = Router.extend({
     },
 
     catchAll: function () {
-        this.redirectTo('');
+        this.redirectTo('engagements');
     }
 });

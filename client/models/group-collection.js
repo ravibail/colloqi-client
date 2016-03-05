@@ -1,9 +1,10 @@
 // Group Collection - group-collection.js
 var AmpCollection = require('ampersand-rest-collection');
-var Group = require('Group');
+var Group = require('./group');
 
 
-module.exports = AmpCollection.extend({
+var groupCollection = AmpCollection.extend({
     model: Group,
-    url: '/api/group'
 });
+
+module.exports = groupCollection;

@@ -30,10 +30,7 @@ module.exports = View.extend({
 
         // main renderer
         this.renderWithTemplate(this);
-
-        var div = document.createElement('div');
-        document.body.appendChild(div);
-        ReactDOM.render(<Layout />,div);
+        ReactDOM.render(<Layout />,document.body);
         
         // init and configure our page switcher
         this.pageSwitcher = new ViewSwitcher(this.queryByHook('page-container'), {

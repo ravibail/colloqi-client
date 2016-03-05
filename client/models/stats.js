@@ -1,8 +1,9 @@
-var AmpersandModel = require('ampersand-model');
+// Stats Model - stats.js
+var AmpModel = require('ampersand-model');
 
 
-module.exports = AmpersandModel.extend({
-    urlRoot: "http://localhost:4000/api/users",
+module.exports = AmpModel.extend({
+    urlRoot: "http://localhost:4000/api/stats",
     ajaxConfig: function() {
         return {
             headers : {

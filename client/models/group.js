@@ -1,9 +1,10 @@
 // Group Model - group.js
 var AmpModel = require('ampersand-model');
+var app = require('ampersand-app');
 
 
-module.exports = AmpModel.extend({
-    urlRoot: "http://efle3r.colloqi.com:80/api/groups",
+var groupModel = AmpModel.extend({
+    urlRoot: "http://localhost:4000/api/groups",
     ajaxConfig: function() {
         return {
             headers : {
@@ -13,5 +14,10 @@ module.exports = AmpModel.extend({
                 'withCredentials' : true
             }
         }
+    },
+    props: {
+        'subject': 'string'
     }
 });
+
+module.exports = groupModel;

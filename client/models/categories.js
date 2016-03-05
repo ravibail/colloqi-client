@@ -1,9 +1,9 @@
-// Message Model - message.js
+// Categories Model - categories.js
 var AmpModel = require('ampersand-model');
 
 
 module.exports = AmpModel.extend({
-    urlRoot: "http://efle3r.colloqi.com:80/api/messages",
+    urlRoot: "http://localhost:4000/api/categories",
     ajaxConfig: function() {
         return {
             headers : {
