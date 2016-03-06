@@ -11,10 +11,6 @@ var Node = React.createClass({
     mixins: [ampersandMixin],
     displayName: 'Directory',
     
-    getUserReports : function() {
-        
-    },
-    
     render: function() {
         var user = this.props.user,
             getUserReports = this.getUserReports;
@@ -23,7 +19,7 @@ var Node = React.createClass({
         })
         return (
             <ListItem key={user.id} primaryText={user.title} nestedItems={childNodes}
-                                    rightIcon={<ClipboardIcon onTouchTap={getReports(user.id)}/>} />
+                                    rightIcon={<ClipboardIcon href={'/viewReports/'+user.id+'/'+user.title}/>} />
         )
     }
 });

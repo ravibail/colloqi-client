@@ -22,6 +22,7 @@ module.exports = Router.extend({
         'task': 'task',
         'form/:index': 'form',
         'reportees': 'reportees',
+        'viewReports/:id/:title': 'viewReports',
         'person/:id': 'personView',
         'person/:id/edit': 'personEdit',
         '(*path)': 'catchAll'
@@ -70,6 +71,11 @@ module.exports = Router.extend({
     reportees: function() {
         app.state = {title: 'Reportees'};
         ReactDOM.render(<Tree />, document.getElementById('content'));
+    },
+    
+    viewReports: function(id, title) {
+        app.state= {title: 'Reports of '+ title};
+        ReactDOM.render(<Report.display id={id} title={title} />, document.getElementById('content'));
     },
 
     personEdit: function (id) {

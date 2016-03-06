@@ -225,5 +225,16 @@ module.exports = {
                 </List>
             );
         }
+    }),
+    display: React.createClass({
+        mixins: [ampersandMixin],
+        displayName: 'Display reports',
+        
+        render: function() {
+            var reportsList = [];
+            return (<List>
+                        {reportsList}
+                    </List>);
+        }
     })
 }
