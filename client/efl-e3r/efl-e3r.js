@@ -1,3 +1,7 @@
+var _ = require('lodash');
+
+var ReportCollection = require('../models/reports'),
+    ReportModel = require('../models/reports');
 var darConfig = [
         {
             title: "Task",
@@ -99,6 +103,27 @@ var darConfig = [
             {"name": "city", "title": "City", "type": "text"},
             {"name": "pincode", "title": "PIN", "type": "text"}
         ]
+    },
+    allReports = {},
+    displayFields = {
+        "task": {
+            "type": "Type",
+            "date": "Date",
+            "mod": "Module",
+            "op": "Operatives",
+            "or": "On Roll",
+            "demo": "Demo",
+            "sales": "Sales",
+            "lr": "Leads Received",
+            "lc": "Leads Converted"
+        },
+        "engagement": {
+            "type": "Type",
+            "mode": "Mode",
+            "date": "Date",
+            "startTime": "Started",
+            "endTime": "Till",
+        }
     };
 
 
@@ -177,6 +202,20 @@ var getIndividualReports = function(userIds, code, duration, cb) {
     }, cqiPopup.showServerError)
 }
 
+var getAllReports = function() {
+    var collection = new ReportCollection(new ReportModel({type: 'dar'}));
+    collection.fetch({success: function(response, reports, options) {
+        reports = _.filter(reports, function(o) { return (o.type === 'dar');});
+        reports.forEach(function(report) {
+            report.sender = report.sender || {dbid: 'Unknown'};
+            allReports[report.sender.dbid] = allReports[report.sender.dbid] || [];
+            allReports[report.sender.dbid].push(report);
+        })
+    }, error: function(error,data) {
+        console.log(data);
+    }})
+}
+
 var init = function () {
     var today = new Date(),
         yesterday = new Date();
@@ -201,5 +240,8 @@ module.exports = {
     overwriteStats: overwriteStats,
     modes: modes,
     daysList: daysList,
-    fields: fields
+    fields: fields,
+    allReports: allReports,
+    getAllReports: getAllReports,
+    displayFields: displayFields
 }

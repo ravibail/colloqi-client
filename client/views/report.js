@@ -29,6 +29,7 @@ var dar = {
     submenu = [];
     
 var submitReport = function(report) {
+    console.log(report);
     var model = new reportsModel({
         'type': 'dar',
         'sender': {
@@ -42,9 +43,11 @@ var submitReport = function(report) {
         'content': {
             'dar': report
         },
-        'forAll': true
+        'forAll': true,
+        'assets': app.assets
     },{parse: true});
     reports.create(model);
+    app.assets = [];
     app.navigate('');
 }
 
@@ -62,7 +65,7 @@ module.exports = {
             for(var index in eflData.darConfig){
                 var menu = eflData.darConfig[index];
                 if (menu.title != 'Task') {
-                    engagements.push(<ListItem href={"/form/"+index}><FlatButton label={menu.title} fullWidth={true}/></ListItem>);
+                    engagements.push(<ListItem href={"/form/"+index} key={menu.title}><FlatButton label={menu.title} fullWidth={true}/></ListItem>);
                 }
             }
             
@@ -100,7 +103,6 @@ module.exports = {
             dar.type = 'Task';
             dar.code = '011';
             dar.mode = 'In Person';
-            dar.date = dar.date;
             submitReport(dar);
         },
         
@@ -187,7 +189,7 @@ module.exports = {
                     if (field.type == 'text') {
                         formFields.push(<ListItem><TextField floatingLabelText={field.title} value={dar[field.name]} key={field.name} onChange={hasChanged} name={field.name} fullWidth={true}/></ListItem>);
                     } else if (field.type == 'time') {
-                        formFields.push(<ListItem>{field.title}: <TimePicker name={field.name} value={dar[field.name]} key={field.name} onChange={function(event,value) {hasChanged({name:field.name, value:value})}} hintText={field.title} fullWidth={true} /></ListItem>);
+                        formFields.push(<ListItem>{field.title}: <TimePicker name={field.name} pedantic={true} value={dar[field.name]} key={field.name} onChange={function(event,value) {hasChanged({name:field.name, value:value})}} hintText={field.title} fullWidth={true} /></ListItem>);
                     }else if (field.type == 'select') {
                         var menuItems = [];
                         var value = field.value || submenu;
@@ -201,7 +203,7 @@ module.exports = {
                                             <GridList cols={3} cellHeight={70} fullWidth={true}>
                                                 <GridTile><TextField name='empcode' floatingLabelText='Emp code' value={dar.empcode} key={field.name} onChange={hasChanged}/></GridTile>
                                                 <GridTile><TextField name="person" floatingLabelText="Person Name" value={dar.person} onChange={hasChanged}/></GridTile>
-                                                <GridTile><ContentAdd color='green' onTouchTap={addPerson}/></GridTile>
+                                                <GridTile><ContentAdd color='green' onTouchTap={addPerson} mini={true} /></GridTile>
                                             </GridList>
                                         </ListItem> );
                         if (dar.persons) {
@@ -231,7 +233,77 @@ module.exports = {
         displayName: 'Display reports',
         
         render: function() {
-            var reportsList = [];
+            var reportsList = [],
+                userId = this.props.id,
+                title = this.props.title;
+            eflData.allReports[userId] = eflData.allReports[userId] || [];
+            eflData.allReports[userId].forEach(function(report) {
+                if (!report.time || !report.content || !report.content.dar) {
+                    return;
+                }
+                if (report.content.dar.date) {
+                    report.content.dar.date = new Date(report.content.dar.date);
+                }
+                report.time = new Date(report.time);
+                var time = report.time.getDate()+'/'+(report.time.getMonth()+1)+'/'+report.time.getFullYear();
+                var content = [<ListItem><GridList cellHeight={50} ><strong >{time}</strong></GridList><Divider/></ListItem>];
+                if (report.content.dar.type == 'Task') {
+                    for(var key in eflData.displayFields.task) {
+                        if (key == 'date') {
+                            content.push(<ListItem><GridList cellHeight={30} cols={2} >
+                                            <GridTile><div>{eflData.displayFields.task[key]}</div></GridTile>
+                                            <GridTile><strong>{report.content.dar.date?report.content.dar.date.toDateString():''}</strong></GridTile>
+                                        </GridList></ListItem>);
+                        } else {
+                            content.push(<ListItem><GridList cellHeight={30} cols={2} >
+                                            <GridTile><div>{eflData.displayFields.task[key]}</div></GridTile>
+                                            <GridTile><strong>{report.content.dar[key]?report.content.dar[key]:''}</strong></GridTile>
+                                        </GridList></ListItem>);
+                        }
+                    }
+                } else {
+                    for(var key in eflData.displayFields.engagement) {
+                        if (key == 'date') {
+                            content.push(<ListItem><GridList cellHeight={30} cols={2} >
+                                            <GridTile><div>{eflData.displayFields.engagement[key]}</div></GridTile>
+                                            <GridTile><strong>{report.content.dar.date?report.content.dar.date.toDateString():''}</strong></GridTile>
+                                        </GridList></ListItem>);
+                        } else if (key == 'startTime' || key == 'endTime') {
+                            if (report.content.dar[key]) {
+                                report.content.dar[key] = new Date(report.content.dar[key]);
+                                var timeString = report.content.dar[key].toTimeString();
+                            }
+                            content.push(<ListItem><GridList cellHeight={30} cols={2} >
+                                            <GridTile><div>{eflData.displayFields.engagement[key]}</div></GridTile>
+                                            <GridTile><strong>{report.content.dar[key]?timeString:''}</strong></GridTile>
+                                        </GridList></ListItem>);
+                        } else {
+                            content.push(<ListItem><GridList cellHeight={30} cols={2} >
+                                            <GridTile><div>{eflData.displayFields.engagement[key]}</div></GridTile>
+                                            <GridTile><strong>{report.content.dar[key]?report.content.dar[key]:''}</strong></GridTile>
+                                        </GridList></ListItem>);
+                        }
+                    }
+                    for(var key in eflData.darKeys) {
+                        var darKeysContent = [];
+                        if (report.content.dar[eflData.darKeys[key]]) {
+                            darKeysContent.push(<GridTile>{eflData.darKeys[key]}</GridTile>);
+                            if (eflData.darKeys[key] == 'persons') {
+                                var persons = []
+                                for(var i in report.content.dar[eflData.darKeys[key]]) {
+                                    persons.push(<ListItem primaryText={report.content.dar[eflData.darKeys[key]][i].title} secondaryText={report.content.dar[eflData.darKeys[key]][i].empcode} />);
+                                }
+                                darKeysContent.push(<GridTile rows={persons.length*3}>{persons}</GridTile>);
+                            } else
+                                darKeysContent.push(<GridTile><strong>{report.content.dar[eflData.darKeys[key]]}</strong></GridTile>);
+                            content.push(<ListItem><GridList cellHeight={30} cols={2} >
+                                            {darKeysContent}
+                                        </GridList></ListItem>);
+                        }
+                    }
+                }
+                reportsList.push(<ListItem key={report.id}><Paper zDepthIndex={2} children={content} /></ListItem>);
+            })
             return (<List>
                         {reportsList}
                     </List>);

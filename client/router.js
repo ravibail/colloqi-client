@@ -59,17 +59,17 @@ module.exports = Router.extend({
     },
     
     task: function() {
-        app.state = {title: 'Task form'};
+        app.state = {title: 'Task form', state:'form'};
         ReactDOM.render(<Report.taskForm />, document.getElementById('content'));
     },
     
     form: function(index) {
-        app.state = {title: 'Engagement'};
+        app.state = {title: 'Engagement', state: 'form'};
         ReactDOM.render(<Report.formPage index={index} />,document.getElementById('content'));
     },
     
     reportees: function() {
-        app.state = {title: 'Reportees'};
+        app.state = {title: 'Reportees', state: 'report'};
         ReactDOM.render(<Tree />, document.getElementById('content'));
     },
     

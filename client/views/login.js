@@ -10,7 +10,8 @@ var React = require('react'),
     _ = require('lodash');
     
 var Users = require('../models/person'),
-    Groups = require('../models/group');
+    Groups = require('../models/group'),
+    eflData = require('../efl-e3r/efl-e3r');
     
 module.exports = React.createClass({
     mixins: [ampersandMixin],
@@ -50,6 +51,7 @@ module.exports = React.createClass({
                 }, error: function(err) {
                     console.log(err);
                 }});
+                eflData.getAllReports();
                 app.navigate("");
             } else if (xhr.readyState == 4 && xhr.status != 200) {
                 self.setState({message: 'Login failed!'});

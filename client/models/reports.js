@@ -23,7 +23,8 @@ var reports = AmpModel.extend({
         'forAll': 'boolean',
         'groupId': 'string',
         'groupSubject': 'string',
-        'time': 'object'
+        'time': 'date',
+        'assets': ['object']
     }
 });
 
